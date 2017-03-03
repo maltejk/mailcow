@@ -78,7 +78,10 @@ checkports() {
 	if [[ -z $(which mysql) || -z $(which dig) || -z $(which nc) ]]; then
 		echo "$(textb [INFO]) - Installing prerequisites for DNS and port checks"
 		apt-get -y update > /dev/null
-		apt-get -y install curl netcat-traditional dnsutils mysql-client > /dev/null 2>&1
+		apt-get -y install curl netcat-traditional dnsutils > /dev/null 2>&1
+		if [[ -z $(which mysql) ]]; then
+			apt-get -y install mysql-client > /dev/null 2>&1
+		fi
 	fi
 	for port in 25 143 465 587 993 995 8983
 	do
