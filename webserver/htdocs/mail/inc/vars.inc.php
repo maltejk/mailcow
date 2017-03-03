@@ -58,4 +58,8 @@ $VALID_SRR = array(
 // Default hashing mechanism should not be changed. If changed, adjust dovecot-mysql.conf accordingly
 $HASHING = "MAILCOW_HASHING";
 
+// Default number of rows per page before initiating pagination
+$DATA_ROWS_P_P = 5;
+// Define how many page numbers to show in a paginated page
+$PAGINATION_NUMBERS = 3;
 ?>

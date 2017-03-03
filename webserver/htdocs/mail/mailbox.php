@@ -76,8 +76,17 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 						);
 						return false;
 					}
-	        if(!empty($rows)):
-					while($row = array_shift($rows)):
+					$lst = $rows;
+					$rowc = 0;
+					$page = (isset($_GET['page_domains']) && !empty($_GET['page_domains']) ? intval($_GET['page_domains']) : 1);
+					$arr = paginate($lst, $DATA_ROWS_P_P, $page);
+					$navs = (is_float(count($lst) / $DATA_ROWS_P_P) ? intval(count($lst) / $DATA_ROWS_P_P) + 1 : intval(count($lst) / $DATA_ROWS_P_P));
+					$navstart = (($page - $PAGINATION_NUMBERS) <= 0 ? 1 : ($page - $PAGINATION_NUMBERS));
+					$navend = ($page < ($navs - $PAGINATION_NUMBERS) ? ($page + $PAGINATION_NUMBERS) : $navs);
+					$navrange = range($navstart, $navend);
+					if(!empty($arr)):
+					while($row = array_shift($arr)):
+					$rowc = ++$rowc;
 						try {
 							$stmt = $pdo->prepare("SELECT COUNT(*) AS `count` FROM `alias`
 								WHERE `domain`= :domain
@@ -144,19 +153,47 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 							endif;
 							?>
 					</tbody>
+					<tfoot>
 						<?php
 						if ($_SESSION['mailcow_cc_role'] == "admin"):
 						?>
-					<tfoot>
 						<tr id="no-data">
 							<td colspan="8" style="text-align: center; font-style: normal; border-top: 1px solid #e7e7e7;">
 								<a href="/add.php?domain"><?=$lang['mailbox']['add_domain'];?></a>
 							</td>
 						</tr>
-					</tfoot>
+						<?php
+						endif;
+						if ($navs !== 1):
+						?>
+						<tr>
+							<td style="text-align: center; border-top: 1px solid #e7e7e7;" colspan="8">
+								<nav>
+									<ul class="pagination">
+								<?php
+								if (in_array($page-1, $navrange)) {
+									$prev = $page-1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_domains" => $prev)))."\">&laquo;</a></li>";
+								}
+
+								foreach($navrange as $item) {
+									$active = ($item == $page ? " selctd " : " ");
+									echo "<li><a class=\"btn".$active."pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_domains" => $item)))."\">$item</a></li>";
+								}
+
+								if (in_array($page+1, $navrange)) {
+									$next = $page+1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_domains" => $next)))."\">&raquo;</a></li>";
+								}
+								?>
+									</ul>
+								</nav>
+							</td>
+						</tr>
 						<?php
 						endif;
 						?>
+					</tfoot>
 				</table>
 				</div>
 			</div>
@@ -212,8 +249,17 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 							'msg' => 'MySQL: '.$e
 						);
 					}
-	        if(!empty($rows)):
-					while($row = array_shift($rows)):
+					$lst = $rows;
+					$rowc = 0;
+					$page = (isset($_GET['page_domal']) && !empty($_GET['page_domal']) ? intval($_GET['page_domal']) : 1);
+					$arr = paginate($lst, $DATA_ROWS_P_P, $page);
+					$navs = (is_float(count($lst) / $DATA_ROWS_P_P) ? intval(count($lst) / $DATA_ROWS_P_P) + 1 : intval(count($lst) / $DATA_ROWS_P_P));
+					$navstart = (($page - $PAGINATION_NUMBERS) <= 0 ? 1 : ($page - $PAGINATION_NUMBERS));
+					$navend = ($page < ($navs - $PAGINATION_NUMBERS) ? ($page + $PAGINATION_NUMBERS) : $navs);
+					$navrange = range($navstart, $navend);
+					if(!empty($arr)):
+					while($row = array_shift($arr)):
+					$rowc = ++$rowc;
 					?>
 						<tr id="data">
 							<td><?=htmlspecialchars($row['alias_domain']);?></td>
@@ -241,6 +287,36 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 								<a href="/add.php?aliasdomain"><?=$lang['mailbox']['add_domain_alias'];?></a>
 							</td>
 						</tr>
+						<?php
+						if ($navs !== 1):
+						?>
+						<tr>
+							<td style="text-align: center; border-top: 1px solid #e7e7e7;" colspan="4">
+								<nav>
+									<ul class="pagination">
+								<?php
+								if (in_array($page-1, $navrange)) {
+									$prev = $page-1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_domal" => $prev)))."\">&laquo;</a></li>";
+								}
+
+								foreach($navrange as $item) {
+									$active = ($item == $page ? " selctd " : " ");
+									echo "<li><a class=\"btn".$active."pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_domal" => $item)))."\">$item</a></li>";
+								}
+
+								if (in_array($page+1, $navrange)) {
+									$next = $page+1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_domal" => $next)))."\">&raquo;</a></li>";
+								}
+								?>
+									</ul>
+								</nav>
+							</td>
+						</tr>
+						<?php
+						endif;
+						?>
 					</tfoot>
 				</table>
 				</div>
@@ -311,8 +387,17 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 							);
 							return false;
 						}
-	          if(!empty($rows)):
-						while($row = array_shift($rows)):
+						$lst = $rows;
+						$rowc = 0;
+						$page = (isset($_GET['page_mailboxes']) && !empty($_GET['page_mailboxes']) ? intval($_GET['page_mailboxes']) : 1);
+						$arr = paginate($lst, $DATA_ROWS_P_P, $page);
+						$navs = (is_float(count($lst) / $DATA_ROWS_P_P) ? intval(count($lst) / $DATA_ROWS_P_P) + 1 : intval(count($lst) / $DATA_ROWS_P_P));
+						$navstart = (($page - $PAGINATION_NUMBERS) <= 0 ? 1 : ($page - $PAGINATION_NUMBERS));
+						$navend = ($page < ($navs - $PAGINATION_NUMBERS) ? ($page + $PAGINATION_NUMBERS) : $navs);
+						$navrange = range($navstart, $navend);
+						if(!empty($arr)):
+						while($row = array_shift($arr)):
+						$rowc = ++$rowc;
 							try {
 								$stmt = $pdo->prepare("SELECT IFNULL(COUNT(`address`), 0) AS `spamalias`
 												FROM `spamalias`
@@ -390,6 +475,36 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 								<a href="/add.php?mailbox"><?=$lang['mailbox']['add_mailbox'];?></a>
 							</td>
 						</tr>
+						<?php
+						if ($navs !== 1):
+						?>
+						<tr>
+							<td style="text-align: center; border-top: 1px solid #e7e7e7;" colspan="9">
+								<nav>
+									<ul class="pagination">
+								<?php
+								if (in_array($page-1, $navrange)) {
+									$prev = $page-1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_mailboxes" => $prev)))."\">&laquo;</a></li>";
+								}
+
+								foreach($navrange as $item) {
+									$active = ($item == $page ? " selctd " : " ");
+									echo "<li><a class=\"btn".$active."pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_mailboxes" => $item)))."\">$item</a></li>";
+								}
+
+								if (in_array($page+1, $navrange)) {
+									$next = $page+1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_mailboxes" => $next)))."\">&raquo;</a></li>";
+								}
+								?>
+									</ul>
+								</nav>
+							</td>
+						</tr>
+						<?php
+						endif;
+						?>
 					</tfoot>
 				</table>
 				</div>
@@ -455,8 +570,17 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 						);
 						return false;
 					}
-	        if(!empty($rows)):
-					while($row = array_shift($rows)):
+					$lst = $rows;
+					$rowc = 0;
+					$page = (isset($_GET['page_aliases']) && !empty($_GET['page_aliases']) ? intval($_GET['page_aliases']) : 1);
+					$arr = paginate($lst, $DATA_ROWS_P_P, $page);
+					$navs = (is_float(count($lst) / $DATA_ROWS_P_P) ? intval(count($lst) / $DATA_ROWS_P_P) + 1 : intval(count($lst) / $DATA_ROWS_P_P));
+					$navstart = (($page - $PAGINATION_NUMBERS) <= 0 ? 1 : ($page - $PAGINATION_NUMBERS));
+					$navend = ($page < ($navs - $PAGINATION_NUMBERS) ? ($page + $PAGINATION_NUMBERS) : $navs);
+					$navrange = range($navstart, $navend);
+	        if(!empty($arr)):
+					while($row = array_shift($arr)):
+					$rowc = ++$rowc;
 					?>
 						<tr id="data">
 							<td>
@@ -501,6 +625,36 @@ $_SESSION['return_to'] = $_SERVER['REQUEST_URI'];
 								<a href="/add.php?alias"><?=$lang['mailbox']['add_alias'];?></a>
 							</td>
 						</tr>
+						<?php
+						if ($navs !== 1):
+						?>
+						<tr>
+							<td style="text-align: center; border-top: 1px solid #e7e7e7;" colspan="5">
+								<nav>
+									<ul class="pagination">
+								<?php
+								if (in_array($page-1, $navrange)) {
+									$prev = $page-1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_aliases" => $prev)))."\">&laquo;</a></li>";
+								}
+
+								foreach($navrange as $item) {
+									$active = ($item == $page ? " selctd " : " ");
+									echo "<li><a class=\"btn".$active."pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_aliases" => $item)))."\">$item</a></li>";
+								}
+
+								if (in_array($page+1, $navrange)) {
+									$next = $page+1;
+									echo "<li><a class=\"btn pagntn\" href=\"?".http_build_query(array_merge($_GET, array("page_aliases" => $next)))."\">&raquo;</a></li>";
+								}
+								?>
+									</ul>
+								</nav>
+							</td>
+						</tr>
+						<?php
+						endif;
+						?>
 					</tfoot>
 				</table>
 				</div>

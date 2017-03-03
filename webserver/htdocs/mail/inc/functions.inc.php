@@ -935,7 +935,7 @@ function mailbox_add_mailbox($postarray) {
 	}
 
 	try {
-		$stmt = $pdo->prepare("SELECT 
+		$stmt = $pdo->prepare("SELECT
 			COUNT(*) as count,
 			COALESCE(ROUND(SUM(`quota`)/1048576), 0) as `quota`
 				FROM `mailbox`
@@ -1091,7 +1091,7 @@ function mailbox_add_mailbox($postarray) {
 	}
 
 	try {
-		$stmt = $pdo->prepare("INSERT INTO `mailbox` (`username`, `password`, `name`, `maildir`, `quota`, `local_part`, `domain`, `created`, `modified`, `active`) 
+		$stmt = $pdo->prepare("INSERT INTO `mailbox` (`username`, `password`, `name`, `maildir`, `quota`, `local_part`, `domain`, `created`, `modified`, `active`)
 			VALUES (:username, :password_hashed, :name, :maildir, :quota_b, :local_part, :domain, :created, :modified, :active)");
 		$stmt->execute(array(
 			':username' => $username,
@@ -1222,7 +1222,7 @@ function mailbox_edit_domain($postarray) {
 	isset($postarray['active']) ? $active = '1' : $active = '0';
 
 	try {
-		$stmt = $pdo->prepare("SELECT 
+		$stmt = $pdo->prepare("SELECT
 				COUNT(*) AS count,
 				MAX(COALESCE(ROUND(`quota`/1048576), 0)) AS `maxquota`,
 				COALESCE(ROUND(SUM(`quota`)/1048576), 0) AS `quota`
@@ -1264,7 +1264,7 @@ function mailbox_edit_domain($postarray) {
 		);
 		return false;
 	}
-	
+
 	if ($maxquota > $quota) {
 		$_SESSION['return'] = array(
 			'type' => 'danger',
@@ -1272,7 +1272,7 @@ function mailbox_edit_domain($postarray) {
 		);
 		return false;
 	}
-	
+
 	if ($MailboxData['maxquota'] > $maxquota) {
 		$_SESSION['return'] = array(
 			'type' => 'danger',
@@ -1280,7 +1280,7 @@ function mailbox_edit_domain($postarray) {
 		);
 		return false;
 	}
-	
+
 	if ($MailboxData['quota'] > $quota) {
 		$_SESSION['return'] = array(
 			'type' => 'danger',
@@ -1288,7 +1288,7 @@ function mailbox_edit_domain($postarray) {
 		);
 		return false;
 	}
-	
+
 	if ($MailboxData['count'] > $mailboxes) {
 		$_SESSION['return'] = array(
 			'type' => 'danger',
@@ -1296,7 +1296,7 @@ function mailbox_edit_domain($postarray) {
 		);
 		return false;
 	}
-	
+
 	if ($AliasData['count'] > $aliases) {
 		$_SESSION['return'] = array(
 			'type' => 'danger',
@@ -1313,7 +1313,7 @@ function mailbox_edit_domain($postarray) {
 		return false;
 	}
 	try {
-		$stmt = $pdo->prepare("UPDATE `domain` SET 
+		$stmt = $pdo->prepare("UPDATE `domain` SET
 		`modified`= :modified,
 		`relay_all_recipients` = :relay_all_recipients,
 		`backupmx` = :backupmx,
@@ -1365,7 +1365,7 @@ function edit_domain_admin($postarray) {
 		);
 		return false;
 	}
-	
+
 	foreach ($postarray['domain'] as $domain) {
 		if (!is_valid_domain_name($domain)) {
 			$_SESSION['return'] = array(
@@ -1492,14 +1492,14 @@ function mailbox_edit_mailbox($postarray) {
 		$stmt->execute(array(':username' => $username));
 		$MailboxData1 = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		$stmt = $pdo->prepare("SELECT 
+		$stmt = $pdo->prepare("SELECT
 			COALESCE(ROUND(SUM(`quota`)/1048576), 0) as `quota_m_now`
 				FROM `mailbox`
 					WHERE `username` = :username");
 		$stmt->execute(array(':username' => $username));
 		$MailboxData2 = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		$stmt = $pdo->prepare("SELECT 
+		$stmt = $pdo->prepare("SELECT
 			COALESCE(ROUND(SUM(`quota`)/1048576), 0) as `quota_m_in_use`
 				FROM `mailbox`
 					WHERE `domain` = :domain");
@@ -1565,7 +1565,7 @@ function mailbox_edit_mailbox($postarray) {
 	}
 	if (isset($postarray['sender_acl']) && is_array($postarray['sender_acl'])) {
 		foreach ($postarray['sender_acl'] as $sender_acl) {
-			if (!filter_var($sender_acl, FILTER_VALIDATE_EMAIL) && 
+			if (!filter_var($sender_acl, FILTER_VALIDATE_EMAIL) &&
 				!is_valid_domain_name(str_replace('@', '', $sender_acl))) {
 					$_SESSION['return'] = array(
 						'type' => 'danger',
@@ -1986,7 +1986,7 @@ function set_admin_account($postarray) {
 		}
 		$password_hashed = hash_password($postarray['admin_pass']);
 		try {
-			$stmt = $pdo->prepare("UPDATE `admin` SET 
+			$stmt = $pdo->prepare("UPDATE `admin` SET
 				`modified` = :modified,
 				`password` = :password_hashed,
 				`username` = :name
@@ -2008,7 +2008,7 @@ function set_admin_account($postarray) {
 	}
 	else {
 		try {
-			$stmt = $pdo->prepare("UPDATE `admin` SET 
+			$stmt = $pdo->prepare("UPDATE `admin` SET
 				`modified` = :modified,
 				`username` = :name
 					WHERE `username` = :name_now");
@@ -2027,7 +2027,7 @@ function set_admin_account($postarray) {
 		}
 	}
 	try {
-		$stmt = $pdo->prepare("UPDATE `domain_admins` SET 
+		$stmt = $pdo->prepare("UPDATE `domain_admins` SET
 			`domain` = :domain,
 			`username` = :name
 				WHERE `username` = :name_now");
@@ -2055,7 +2055,7 @@ function set_time_limited_aliases($postarray) {
 	$username	= $_SESSION['mailcow_cc_username'];
 	$domain		= substr($username, strpos($username, '@'));
 	if (($_SESSION['mailcow_cc_role'] != "user" &&
-		$_SESSION['mailcow_cc_role'] != "domainadmin") || 
+		$_SESSION['mailcow_cc_role'] != "domainadmin") ||
 			empty($username) ||
 			empty($domain)) {
 				$_SESSION['return'] = array(
@@ -2073,7 +2073,7 @@ function set_time_limited_aliases($postarray) {
 				);
 				return false;
 			}
-			$validity = strtotime("+".$postarray["validity"]." hour"); 
+			$validity = strtotime("+".$postarray["validity"]." hour");
 			$letters = 'abcefghijklmnopqrstuvwxyz1234567890';
 			$random_name = substr(str_shuffle($letters), 0, 24);
 			try {
@@ -2110,7 +2110,7 @@ function set_time_limited_aliases($postarray) {
 					'msg' => 'MySQL: '.$e
 				);
 				return false;
-			}	
+			}
 			$_SESSION['return'] = array(
 				'type' => 'success',
 				'msg' => sprintf($lang['success']['mailbox_modified'], htmlspecialchars($username))
@@ -2119,7 +2119,7 @@ function set_time_limited_aliases($postarray) {
 		case "extend":
 			try {
 				$stmt = $pdo->prepare("UPDATE `spamalias` SET `validity` = (`validity` + 3600)
-					WHERE `goto` = :username 
+					WHERE `goto` = :username
 						AND `validity` >= :validity");
 				$stmt->execute(array(
 					':username' => $username,
@@ -2243,12 +2243,12 @@ function add_domain_admin($postarray) {
 			WHERE `username` = :username");
 		$stmt->execute(array(':username' => $username));
 		$num_results[] = count($stmt->fetchAll(PDO::FETCH_ASSOC));
-		
+
 		$stmt = $pdo->prepare("SELECT `username` FROM `admin`
 			WHERE `username` = :username");
 		$stmt->execute(array(':username' => $username));
 		$num_results[] = count($stmt->fetchAll(PDO::FETCH_ASSOC));
-		
+
 		$stmt = $pdo->prepare("SELECT `username` FROM `domain_admins`
 			WHERE `username` = :username");
 		$stmt->execute(array(':username' => $username));
@@ -2822,10 +2822,10 @@ function get_sender_acl_handles($mailbox, $which) {
 				if ($_SESSION['mailcow_cc_role'] == "admin"  ) {
 					$stmt = $pdo->prepare("SELECT DISTINCT `domain` FROM `domain`
 						WHERE `domain` NOT IN (
-							SELECT REPLACE(`send_as`, '@', '') FROM `sender_acl` 
+							SELECT REPLACE(`send_as`, '@', '') FROM `sender_acl`
 								WHERE `logged_in_as` = :logged_in_as)
 						AND	`domain` NOT IN (
-								SELECT REPLACE(`address`, '@', '') FROM `alias` 
+								SELECT REPLACE(`address`, '@', '') FROM `alias`
 									WHERE `goto` = :goto)");
 					$stmt->execute(array(
 						':logged_in_as' => $mailbox,
@@ -2837,7 +2837,7 @@ function get_sender_acl_handles($mailbox, $which) {
 						WHERE `username` = :username
 							AND `domain` != 'ALL'
 							AND	`domain` NOT IN (
-								SELECT REPLACE(`send_as`, '@', '') FROM `sender_acl` 
+								SELECT REPLACE(`send_as`, '@', '') FROM `sender_acl`
 									WHERE `logged_in_as` = :logged_in_as)");
 					$stmt->execute(array(
 						':logged_in_as' => $mailbox,
@@ -2861,7 +2861,7 @@ function get_sender_acl_handles($mailbox, $which) {
 					$stmt = $pdo->prepare("SELECT `address` FROM `alias`
 						WHERE `goto` != :goto
 							AND `address` NOT IN (
-								SELECT `send_as` FROM `sender_acl` 
+								SELECT `send_as` FROM `sender_acl`
 									WHERE `logged_in_as` = :logged_in_as)");
 					$stmt->execute(array(
 						':logged_in_as' => $mailbox,
@@ -2875,7 +2875,7 @@ function get_sender_acl_handles($mailbox, $which) {
 								SELECT `domain` FROM `domain_admins`
 									WHERE `username` = :username)
 							AND `address` NOT IN (
-								SELECT `send_as` FROM `sender_acl` 
+								SELECT `send_as` FROM `sender_acl`
 									WHERE `logged_in_as` = :logged_in_as)");
 					$stmt->execute(array(
 						':logged_in_as' => $mailbox,
@@ -2897,7 +2897,7 @@ function get_sender_acl_handles($mailbox, $which) {
 	}
 	return false;
 }
-function is_valid_domain_name($domain_name) { 
+function is_valid_domain_name($domain_name) {
 	if (empty($domain_name)) {
 		return false;
 	}
@@ -2905,5 +2905,10 @@ function is_valid_domain_name($domain_name) {
 	return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name)
 		   && preg_match("/^.{1,253}$/", $domain_name)
 		   && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain_name));
+}
+function paginate($array, $pageSize, $page = 1) {
+		$page = $page < 1 ? 1 : $page;
+		$start = ($page - 1) * $pageSize;
+		return array_slice($array, $start, $pageSize);
 }
 ?>

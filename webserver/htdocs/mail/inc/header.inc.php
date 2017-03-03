@@ -112,6 +112,17 @@ table[data-sortable].sortable-theme-bootstrap.sortable-theme-bootstrap-striped t
 .sort-table:hover {
   border-bottom-color: #00B7DC !important;
 }
+.pagntn {
+	border-radius: 0px;
+}
+.selctd {
+	color: #ffffff !important;
+	background-color: #337ab7 !important;
+	border-color: #337ab7 !important;
+}
+.pagination {
+	margin: 0px !important;
+}
 </style>
 <?php
 if (preg_match("/mailbox.php/i", $_SERVER['REQUEST_URI'])):
