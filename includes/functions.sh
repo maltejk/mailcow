@@ -240,7 +240,7 @@ installtask() {
 			/usr/sbin/make-ssl-cert generate-default-snakeoil --force-overwrite
 			echo "$(textb [INFO]) - Installing packages unattended, please stand by, errors will be reported."
 			apt-get -y update >/dev/null
-			if [[ ${my_dbhost} == "localhost" || ${my_dbhost} == "127.0.0.1" ]] && [[ ${is_upgradetask} != "yes" ]]; then
+			if [[ ${my_dbhost} == "localhost" || ${my_dbhost} == "127.0.0.1" ]] && [[ ${is_upgradetask} != "yes" ]] && [[ -z $(which mysqld) || -z $(which mysql) ]]; then
 				if [[ ${my_usemariadb} == "yes" ]]; then
 					DATABASE_BACKEND="mariadb-client mariadb-server"
 				else
